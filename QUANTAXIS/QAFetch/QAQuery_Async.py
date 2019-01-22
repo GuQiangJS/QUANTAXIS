@@ -61,7 +61,12 @@ async def QA_fetch_stock_day(code, start, end, format='numpy', frequence='day', 
                 "$gte": QA_util_date_stamp(start)}})
         #res=[QA_util_dict_remove_key(data, '_id') for data in cursor]
         try:
-            res = pd.DataFrame([item async for item in cursor])
+            res = pd.DataFrame([item for item in await cursor.to_list(length=100)])
+            """
+            恢复变更集https://github.com/QUANTAXIS/QUANTAXIS/commit/6c84e92a061e7cece79775ac761d525b8a8a97e8#diff-b57c916f5a2dcbbb4ebe43089d1a6791
+            async 在 for 语句中的支持在python3.6中才支持
+            """
+            # res = pd.DataFrame([item async for item in cursor])
         except SyntaxError:
             print('THIS PYTHON VERSION NOT SUPPORT "async for" function')
             pass
@@ -116,7 +121,12 @@ async def QA_fetch_stock_min(code, start, end, format='numpy', frequence='1min',
     })
 
     try:
-        res = pd.DataFrame([item async for item in cursor])
+        res = pd.DataFrame([item for item in await cursor.to_list(length=100)])
+        """
+        恢复变更集https://github.com/QUANTAXIS/QUANTAXIS/commit/6c84e92a061e7cece79775ac761d525b8a8a97e8#diff-b57c916f5a2dcbbb4ebe43089d1a6791
+        async 在 for 语句中的支持在python3.6中才支持
+        """
+        # res = pd.DataFrame([item async for item in cursor])
     except SyntaxError:
         print('THIS PYTHON VERSION NOT SUPPORT "async for" function')
         pass
